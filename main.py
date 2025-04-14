@@ -4,9 +4,9 @@ from google.oauth2 import service_account
 from google.api_core.exceptions import NotFound
 
 # Setup
-PROJECT_ID = "staging-env-449414"
-DATASET_ID = "biguqery_mcp"
-SERVICE_ACCOUNT_FILE = "/Users/arshad1996/Desktop/my_github/bigquery-mcp-insert-demo/secret/staging-env-449414-bd729276d3a7.json"
+PROJECT_ID = "your-gcp-project-id"
+DATASET_ID = "your-bigquery-dataset"
+SERVICE_ACCOUNT_FILE = "/path/to/your-service-account-key.json"
 
 mcp = FastMCP("BigQueryReadWriter")
 
