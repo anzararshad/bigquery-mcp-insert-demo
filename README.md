@@ -1,90 +1,132 @@
-# BigQuery Data Writer for Claude
+# 🧪 BigQuery Data Writer MCP
 
-This project lets you use Claude to generate sample data and automatically insert it into Google BigQuery tables. It uses the MCP (Model Completion Provider) Server to create a tool that Claude can use to interact with BigQuery.
+This project allows you to use **Claude** to generate sample data and automatically write it to **Google BigQuery** using the **Model Context Protocol (MCP)** server.
 
-## 🚀 What it does
+It's a handy way to prototype, test, or bootstrap your pipelines with realistic datasets.
 
-- Allows Claude to create BigQuery tables with custom schemas
-- Enables Claude to insert data directly into those tables
-- Perfect for quickly generating test datasets, sample data, or prototyping
+---
+
+## 🚀 What It Does
+
+- Let Claude create BigQuery tables with custom schemas
+- Allows Claude to insert data directly into those tables
+- Great for generating test data, prototyping ideas, or populating sample datasets for LLM/RAG training and experimentation
+
+---
 
 ## 📋 Requirements
 
 - Python 3.13+
-- Google Cloud account with BigQuery access
-- Service account credentials with BigQuery permissions
-- Claude Desktop Installed 
+- Google Cloud project with BigQuery enabled
+- A service account key with BigQuery access
+- Claude Desktop installed and running locally
+
+---
 
 ## 🔧 Installation
 
-1. Clone this repository:
-   ```
-   git clone https://github.com/yourusername/mcp-bigquery.git
-   cd mcp-bigquery
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/anzararshad/bigquery-mcp-insert-demo.git
+   cd bigquery-mcp-insert-demo
    ```
 
-2. Install the required dependencies(use UV):
-   ```
-   uv pip install -e .
+2. Install dependencies using [UV](https://github.com/astral-sh/uv):
+
+   ```bash
+   uv venv
+   uv sync
    ```
 
 3. Set up your Google Cloud service account:
-   - Create a service account with BigQuery access
+
+   - Create a service account with BigQuery Admin/Editor roles
    - Download the JSON key file
-   - Save it in the `secret` folder (or update the path in `main.py`)
+   - Save it in a `secret/` folder and configure the path in `main.py`
+
+---
 
 ## ⚙️ Configuration
 
-Edit the `main.py` file to update your configuration:
+Edit `main.py` to add your project and dataset info:
 
 ```python
-# Setup
 PROJECT_ID = "your-gcp-project-id"
 DATASET_ID = "your-bigquery-dataset"
-SERVICE_ACCOUNT_FILE = "/path/to/your-service-account-key.json"
+SERVICE_ACCOUNT_FILE = "./secret/your-service-account-key.json"
 ```
 
-Make sure the dataset exists in your BigQuery project, or create it before running the tool.
+Ensure the dataset exists in your project. Create it via the BigQuery Console or CLI if not.
 
-## 🏃‍♂️ Running the MCP Server
+---
 
-Start the MCP server:
+## 🏃 Running the MCP Server
+
+To register the BigQuery writer tool with Claude:
+
+```bash
+uv run mcp install main.py
+```
+
+Expected output:
 
 ```
-uv run mcp install main.py  
+INFO     Added server 'BigQueryReadWriter' to Claude config
+INFO     Successfully installed BigQueryReadWriter in Claude app
 ```
 
-You should see below in console:
+This means the MCP server is now available to Claude Desktop.
+
+---
+
+## 🤖 Example Prompt to Use with Claude
+
+Ask Claude to create and populate a table using this kind of prompt:
+
 ```
-INFO     Added server 'BigQueryReadWriter' to Claude config                                                                                       claude.py:129
-INFO     Successfully installed BigQueryReadWriter in Claude app                                                                                     cli.py:467
+I’m working on a dataset around tech startups and their funding history. Can you generate a sample data row for startups that recently raised funding?
+
+Please respond in JSON format with these fields:
+* "table_id": a string for the BigQuery table name.
+* "schema": a list of columns, where each column is a JSON object with:
+   * "name": the column name
+   * "type": BigQuery data type (STRING, INT64, FLOAT64, BOOL, TIMESTAMP, etc.)
+   * "description": a short description of the column
+* "data": a single JSON object with values that match the schema.
+
+Include fields like:
+- startup_name
+- industry
+- funding_stage (like Seed, Series A, Series B, etc.)
+- amount_raised_usd
+- lead_investor
+- founded_year
+- is_profitable (boolean)
+- headquarters_country
+- funding_date (timestamp)
+
+Note: Project ID and dataset are already configured, no need to include them.
+
 ```
-now the mcp server will be get added to claude desktop
 
-1. The tool accepts a payload with:
-   - `table_id`: The name for the BigQuery table
-   - `schema`: A list of column definitions with name, type, and description
-   - `data`: A dictionary/row of data matching the schema
+Claude will then:
+- Define a schema
+- Generate mock data
+- Call the `BigQueryReadWriter` tool via MCP
+- Create the table and insert the data into BigQuery 🎯
 
-## 📝 Example Usage with Claude
+---
 
-Here's a sample prompt you can use with Claude:
-I need to create a table with country population and household data. Can you generate realistic data for at least 10 countries? 
+## 📚 References
 
-```Please use the write_to_bigquery tool to:
-1. Create a table named "global_demographics" 
-2. Include fields for country name, population, households, continent, population density, and avg household size
-3. Generate realistic data for at least 10 diverse countries across different continents
+- [Anthropic MCP Docs](https://docs.anthropic.com/en/docs/agents-and-tools/mcp)
+---
 
-The response must be in JSON format with:
-- "table_id": the name for the BigQuery table
-- "schema": list of column definitions (name, type, and description for each)
-- "data": a JSON object with values matching the schema
+## 🧠 Why I Built This
 
-Remember that the Project ID and dataset are already configured in the tool.
-```
-Claude will respond with the appropriate JSON structure and use the BigQueryReadWriter tool to create the table and insert the data.
+As someone who works with both data and ML, I often need sample datasets to test pipelines, train models, or prep for a RAG setup. Instead of manually writing mock data every time, I figured — why not ask Claude to generate it for me, *and* push it into BigQuery directly?
 
-## 📚 Resources
+This tool saves me time, and maybe it’ll save you some too. Feel free to fork, tweak, and adapt it to your needs. Drop a ⭐ if it helps you!
 
-- [MCP Documentation](https://docs.anthropic.com/en/docs/agents-and-tools/mcp)
+---
