@@ -8,5 +8,7 @@ wheels/
 
 # Virtual environments
 .venv
-secret/
+secret/*
 .idea/
+# Allow .gitkeep (or any other allowed file)
+!secret/.gitkeep
