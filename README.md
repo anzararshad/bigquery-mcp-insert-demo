@@ -1,8 +1,8 @@
 # 🧪 BigQuery Data Writer MCP
 
-This project allows you to use **Claude** to generate sample data and automatically write it to **Google BigQuery** using the **Model Context Protocol (MCP)** server.
+This project utilizes the [Model Context Protocol Python SDK](https://github.com/modelcontextprotocol/python-sdk), which allows us to create an MCP (Model Context Protocol) server on our end. Using this setup, we can enable Claude to generate sample data and automatically insert it into Google BigQuery tables.
 
-It's a handy way to prototype, test, or bootstrap your pipelines with realistic datasets.
+The MCP server facilitates interactions between Claude and BigQuery, enabling seamless data insertion and table creation for rapid prototyping and testing.
 
 ---
 
@@ -117,7 +117,29 @@ Claude will then:
 - Create the table and insert the data into BigQuery 🎯
 
 ---
+## 🛠 Troubleshooting
 
+If you encounter issues where your Google Cloud packages are not packaged into the `claude_desktop_config.json`, you may need to add them manually by updating your `claude_desktop_config.json` file as follows:
+
+```json
+{
+  "mcpServers": {
+    "BigQueryReadWriter": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--with",
+        "mcp[cli],google-cloud-bigquery,google-auth,google-api-python-client",
+        "mcp",
+        "run",
+        "/Users/arshad1996/bigquery-mcp-insert-demo/main.py"
+      ]
+    }
+  }
+}
+```
+
+Make sure to change the path to your `main.py` file and add the necessary Google Cloud packages in the `args` section. I ran into this issue sometimes, and this manual update solved it.
 ## 📚 References
 
 - [Anthropic MCP Docs](https://docs.anthropic.com/en/docs/agents-and-tools/mcp)
