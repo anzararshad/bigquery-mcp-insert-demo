@@ -1,4 +1,4 @@
-# 🧪 BigQuery Data Writer MCP
+# 🧪 BigQuery Data Writer - MCP server 
 
 This project utilizes the [Model Context Protocol Python SDK](https://github.com/modelcontextprotocol/python-sdk), which allows us to create an MCP (Model Context Protocol) server on our end. Using this setup, we can enable Claude to generate sample data and automatically insert it into Google BigQuery tables.
 
